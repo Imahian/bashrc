@@ -158,3 +158,35 @@ function ip_scan() {
     fi
   done
 }
+
+
+
+check_os() {
+    if [ "$#" -ne 1 ]; then
+        echo -e "\n\e[31m[!] Uso: check_os <direccion-ip>\e[0m\n"
+        return 1
+    fi
+
+    get_ttl() {
+        out=$(ping -c 1 "$1" | awk '/ttl=/ {print $6}')
+        ttl_value=$(echo "$out" | sed -n 's/ttl=\([0-9]\+\)/\1/p')
+        echo "$ttl_value"
+    }
+
+    get_os() {
+        ttl=$1
+
+        if (( ttl >= 0 && ttl <= 64 )); then
+            echo -e "\e[32mLinux\e[0m"
+        elif (( ttl >= 65 && ttl <= 128 )); then
+            echo -e "\e[34mWindows\e[0m"
+        else
+            echo -e "\e[33mNot Found\e[0m"
+        fi
+    }
+
+    ip_address="$1"
+    ttl=$(get_ttl "$ip_address")
+    os_name=$(get_os "$ttl")
+    echo -e "\e[32m$ip_address\e[0m (ttl -> \e[37m$ttl\e[0m): $os_name"
+}
