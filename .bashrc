@@ -190,3 +190,14 @@ check_os() {
     os_name=$(get_os "$ttl")
     echo -e "\e[32m$ip_address\e[0m (ttl -> \e[37m$ttl\e[0m): $os_name"
 }
+
+
+function tun0() {
+    local vpn_ip=$(ip addr show dev tun0 2>/dev/null | awk '/inet / {print $2}')
+
+    if [ -n "$vpn_ip" ]; then
+        echo -e "\e[1;35mtun0 IP\e[0m: \e[1;31m$vpn_ip\e[0m"
+    else
+        echo -e "\e[31mNo VPN connection detected.\e[0m"
+    fi
+}
